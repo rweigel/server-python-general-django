@@ -1,6 +1,11 @@
 # server-python-general-django
 
-Django app build following the [5.2 tutorial](https://docs.djangoproject.com/en/5.2/intro/tutorial01/)
+Django app built following the [5.2 tutorial](https://docs.djangoproject.com/en/5.2/intro/tutorial01/) that adds a `/hapi` endpoint.
 
-TODO: [Mount FastAPI hapiserver app](https://www.google.com/search?q=mount+fastapi+app+in+django+app+options) (Starlett option seems to be best for keeping Django as primary)
-
+```
+git clone https://github.com/rweigel/server-python-general
+git clone https://github.com/rweigel/server-python-general-django
+cd server-python-general; pip install -e .
+cd ../server-python-general-django
+python serve.py
+```
