@@ -1,31 +1,32 @@
 import os
 import hapiserver
-base_dir = "../server-python-general"
-config = {
-    "index.html": os.path.join(base_dir, "html", "index.html"),
-    "path": "",
-    "HAPI": "3.3",
-    "scripts": {
-      "catalog": os.path.join(base_dir, "bin", "psws", "catalog.py"),
-      "info": os.path.join(base_dir, "bin", "psws", "info.py"),
-      "data": os.path.join(base_dir, "bin", "psws", "data.py")
-    }
-  }
+
+
+def django_app():
+  import importlib
+  from django.core.asgi import get_asgi_application
+  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+
+  # Load the Django settings module and tweak values before ASGI app is created
+  _settings = importlib.import_module(os.environ["DJANGO_SETTINGS_MODULE"])
+  _settings.DEBUG = False
+  _settings.ALLOWED_HOSTS = ["*"]
+  return get_asgi_application()
+
+def combine_apps(fastapi_app, django_app):
+  # Create the main Starlette application
+  from starlette.applications import Starlette
+  from starlette.routing import Mount
+  # Serve HAPI routes under data/ path.
+  routes = [ Mount("/data/", app=fastapi_app), Mount("/", app=django_app) ]
+  return Starlette(routes=routes)
+
+
+config = "../server-python-general/bin/psws/config.json"
 fastapi_app = hapiserver.app(config)
-
-from django.core.asgi import get_asgi_application
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
-application = get_asgi_application()
-
-#uvicorn mysite.asgi:app --reload
-# Create the main Starlette application
-from starlette.applications import Starlette
-from starlette.routing import Mount
-app = Starlette(
-    routes=[
-        Mount("/hapi", app=fastapi_app),
-        Mount("/", app=application),
-    ]
-)
+combined_apps = combine_apps(fastapi_app, django_app())
+host = "0.0.0.0"
+port = 8000
+print(f"Starting HAPI server at http://{host}:{port}/data/hapi")
 import uvicorn
-uvicorn.run(app, host="0.0.0.0", port=8000)
+uvicorn.run(combined_apps, host=host, port=port)
