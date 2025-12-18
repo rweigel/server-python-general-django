@@ -24,6 +24,10 @@ def combine_apps(fastapi_app, django_app):
 
 config = "../server-python-general-psws/config.json"
 fastapi_app = hapiserver.app(config)
+
+
+# python3 manage.py runserver port
+
 combined_apps = combine_apps(fastapi_app, django_app())
 host = "0.0.0.0"
 port = 8000

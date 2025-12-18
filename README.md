@@ -1,6 +1,6 @@
 # server-python-general-django
 
-Django app built following the [5.2 tutorial](https://docs.djangoproject.com/en/5.2/intro/tutorial01/) that adds a `/hapi` endpoint.
+Django app built following the [5.2 tutorial](https://docs.djangoproject.com/en/5.2/intro/tutorial01/) that adds a `/hapi` endpoint for PSWS.
 
 ```
 git clone https://github.com/rweigel/server-python-general
